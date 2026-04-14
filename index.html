@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotel Guest Request Management</title>
+    <style>
+        body { font-family: 'Helvetica Neue', Arial, sans-serif; background: #eef2f3; margin: 0; padding: 20px; }
+        .container { max-width: 1100px; margin: 0 auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        h1 { color: #34495e; text-align: center; margin-bottom: 20px; font-size: 1.8em; }
+        
+        .search-container { margin-bottom: 20px; text-align: right; }
+        #search-input { 
+            padding: 10px 15px; width: 300px; border: 1px solid #ddd; 
+            border-radius: 6px; font-size: 0.9em; outline: none;
+        }
+        #search-input:focus { border-color: #409eff; }
+
+        .table-wrapper { 
+            max-height: 550px; overflow-y: auto; border: 1px solid #ddd; border-radius: 8px;
+        }
+
+        table { width: 100%; border-collapse: collapse; position: relative; }
+        th { 
+            background-color: #34495e; color: white; position: sticky; top: 0; 
+            z-index: 10; padding: 15px; text-align: left; font-size: 0.85em;
+        }
+        td { border-bottom: 1px solid #eee; padding: 12px; text-align: left; font-size: 0.9em; color: #2c3e50; }
+        tr:hover { background-color: #f8f9fa; }
+
+        .status { font-weight: bold; padding: 5px 12px; border-radius: 20px; font-size: 0.8em; display: inline-block; min-width: 60px; text-align: center; }
+        .status-対応中 { background: #fff3cd; color: #856404; }
+        .status-完了 { background: #d4edda; color: #155724; }
+        .status-未対応 { background: #f8d7da; color: #721c24; }
+
+        .btn-group { display: flex; gap: 4px; white-space: nowrap; }
+        button { 
+            cursor: pointer; border: 1px solid #dcdfe6; border-radius: 4px; padding: 6px 10px; 
+            font-size: 0.75em; background: #fff; color: #606266; flex: 1;
+        }
+        button:hover { background: #f5f7fa; border-color: #409eff; color: #409eff; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏨 顧客リクエスト管理システム</h1>
+        
+        <div class="search-container">
+            <input type="text" id="search-input" placeholder="顧客名で検索..." onkeyup="filterTable()">
+        </div>
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 150px;">お名前</th>
+                        <th>リクエスト内容</th>
+                        <th style="width: 100px;">状態</th>
+                        <th style="width: 220px;">ステータス更新</th>
+                    </tr>
+                </thead>
+                <tbody id="table-body"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        let allData = [];
+
+        async function loadData() {
+            try {
+                const res = await fetch('/api/requests');
+                allData = await res.json();
+                renderTable(allData);
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
+        function renderTable(data) {
+            const tbody = document.getElementById('table-body');
+            tbody.innerHTML = '';
+            
+            data.forEach(item => {
+                const row = `<tr>
+                    <td><strong>${item.name}</strong></td>
+                    <td>${item.request}</td>
+                    <td><span class="status status-${item.status}">${item.status}</span></td>
+                    <td>
+                        <div class="btn-group">
+                            <button onclick="updateStatus(${item.id}, '未対応')">未対応</button>
+                            <button onclick="updateStatus(${item.id}, '対応中')">対応中</button>
+                            <button onclick="updateStatus(${item.id}, '完了')">完了</button>
+                        </div>
+                    </td>
+                </tr>`;
+                tbody.innerHTML += row;
+            });
+        }
+
+        function filterTable() {
+            const query = document.getElementById('search-input').value.toLowerCase();
+            const filtered = allData.filter(item => item.name.toLowerCase().includes(query));
+            renderTable(filtered);
+        }
+
+        async function updateStatus(id, newStatus) {
+            try {
+                await fetch(`/api/requests/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status: newStatus })
+                });
+                loadData();
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
+        loadData();
+    </script>
+</body>
+</html>
