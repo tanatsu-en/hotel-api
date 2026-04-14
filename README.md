@@ -8,10 +8,10 @@
 
 ##  実装した主要機能
 - **ステータス管理:** 各リクエストの対応状況をワンクリックで更新。
-- <img width="1181" height="771" alt="スクリーンショット 2026-04-14 221203" src="https://github.com/user-attachments/assets/c8dd474e-ba56-41e9-88bb-03aa2490da26" />
+ <img width="1181" height="771" alt="スクリーンショット 2026-04-14 221203" src="https://github.com/user-attachments/assets/c8dd474e-ba56-41e9-88bb-03aa2490da26" />
 
 - **顧客検索機能:** 大量のリクエストの中から、特定の顧客名を瞬時にフィルタリング。
-- <img width="1200" height="337" alt="スクリーンショット 2026-04-14 221147" src="https://github.com/user-attachments/assets/2fbd87d0-56e3-403e-a440-8edac562eb7b" />
+ <img width="1200" height="337" alt="スクリーンショット 2026-04-14 221147" src="https://github.com/user-attachments/assets/2fbd87d0-56e3-403e-a440-8edac562eb7b" />
 
 - **スクロールUI:** 現場での使い勝手を考慮し、一覧性が高いデザインを採用。
 - **REST API:** Node.js (Express) を使用し、データの取得や更新をスムーズに行える設計。
